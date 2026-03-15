@@ -1,144 +1,128 @@
-```javascript
+
 const faqDatabase = [
-  {
-    question: "How do I login to the system?",
-    answer: "You can login using your registered email and password from the login page.",
-    keywords: ["login", "log in", "sign in"]
-  },
-  {
-    question: "How do I register?",
-    answer: "Students can register using their official college email ID.",
-    keywords: ["register", "registration", "signup"]
-  },
-  {
-    question: "What is the placement process?",
-    answer: "Placement process generally includes Aptitude, Technical and HR rounds.",
-    keywords: ["placement", "process", "rounds"]
-  },
-  {
-    question: "What does the admin do?",
-    answer: "Admin monitors placement statistics and manages system data.",
-    keywords: ["admin"]
-  },
-  {
-    question: "What does a company user do?",
-    answer: "Company users can shortlist students and manage recruitment rounds.",
-    keywords: ["company"]
-  },
-  {
-    question: "What does a student user do?",
-    answer: "Students can view eligible companies and track their placement status.",
-    keywords: ["student"]
-  },
-  {
-    question: "How is eligibility calculated?",
-    answer: "Eligibility is calculated based on branch and CGPA requirements of companies.",
-    keywords: ["eligibility", "eligible", "cgpa"]
-  },
-  {
-    question: "How can I reset my password?",
-    answer: "Please contact the admin to reset your password.",
-    keywords: ["password", "forgot"]
-  },
-  {
-    question: "Where can I see placement statistics?",
-    answer: "Placement statistics are available in the admin dashboard under analytics section.",
-    keywords: ["statistics", "stats", "analytics"]
-  },
-  {
-    question: "How many rounds are there in placements?",
-    answer: "Usually there are 3 rounds: Aptitude, Technical and HR.",
-    keywords: ["round"]
-  }
+
+{
+question: "How do I login to the system?",
+answer: "You can login using your registered email and password on the login page.",
+keywords: ["login","signin"]
+},
+
+{
+question: "How do I register as a student?",
+answer: "Students can register using their official college email ID.",
+keywords: ["register","signup"]
+},
+
+{
+question: "What is the placement process?",
+answer: "The placement process generally includes Aptitude, Technical and HR rounds.",
+keywords: ["placement","process","round"]
+},
+
+{
+question: "How is eligibility calculated?",
+answer: "Eligibility is calculated based on branch and CGPA requirements set by companies.",
+keywords: ["eligibility","cgpa"]
+},
+
+{
+question: "Where can I see placement statistics?",
+answer: "Placement statistics are available in the admin dashboard under the analytics section.",
+keywords: ["statistics","analytics","stats"]
+},
+
+{
+question: "How many rounds are there in placements?",
+answer: "Usually there are three rounds: Aptitude, Technical and HR.",
+keywords: ["round"]
+},
+
+{
+question: "What does the admin do?",
+answer: "Admin manages users, monitors placements, and views analytics reports.",
+keywords: ["admin"]
+},
+
+{
+question: "What does a recruiter do?",
+answer: "Recruiters can post jobs, shortlist students and schedule interviews.",
+keywords: ["recruiter","company"]
+},
+
+{
+question: "What can students do in this portal?",
+answer: "Students can view companies, apply for jobs and track their placement status.",
+keywords: ["student"]
+}
+
 ];
 
-function sendMessage() {
+function sendMessage(){
 
-  const input = document.getElementById("userInput");
-  const message = input.value.trim().toLowerCase();
+const input = document.getElementById("userInput");
+const message = input.value.trim().toLowerCase();
 
-  if (!message) return;
+if(!message) return;
 
-  const chatBody = document.getElementById("chatBody");
+const chatBody = document.getElementById("chatBody");
 
-  chatBody.innerHTML += `<div class="user-message">${message}</div>`;
+chatBody.innerHTML += '<div class="user-message">'+message+'</div>';
 
-  input.value = "";
+input.value="";
 
-  chatBody.scrollTop = chatBody.scrollHeight;
+const matches = faqDatabase.filter(faq =>
+faq.keywords.some(keyword => message.includes(keyword))
+);
 
-  // typing animation
-  const typingDiv = document.createElement("div");
-  typingDiv.className = "bot-message";
-  typingDiv.innerText = "Typing...";
-  chatBody.appendChild(typingDiv);
+if(matches.length > 0){
 
-  setTimeout(() => {
+chatBody.innerHTML += '<div class="bot-message">Did you mean:</div>';
 
-    typingDiv.remove();
+matches.forEach((faq,index)=>{
 
-    const matches = faqDatabase.filter(faq =>
-      faq.keywords.some(keyword => message.includes(keyword))
-    );
+chatBody.innerHTML +=
+'<div class="bot-message suggestion" onclick="showAnswer('+faqDatabase.indexOf(faq)+')">'
++faq.question+
+'</div>';
 
-    if (matches.length > 0) {
+});
 
-      let suggestionHTML = `<div class="bot-message">Here are some things I found:</div>`;
+}
+else{
 
-      matches.forEach((faq, index) => {
-
-        suggestionHTML += `
-        <div class="bot-message suggestion" onclick="showAnswer(${faqDatabase.indexOf(faq)})">
-        ${faq.question}
-        </div>
-        `;
-
-      });
-
-      chatBody.innerHTML += suggestionHTML;
-
-    } else {
-
-      chatBody.innerHTML += `
-      <div class="bot-message">
-      Sorry 😔 I couldn't find an answer for that.<br>
-      Try asking about login, placement rounds, CGPA or statistics.
-      </div>
-      `;
-
-    }
-
-    chatBody.scrollTop = chatBody.scrollHeight;
-
-  }, 800);
+chatBody.innerHTML +=
+'<div class="bot-message">Sorry, I could not find a related question.</div>';
 
 }
 
-function showAnswer(index) {
-
-  const chatBody = document.getElementById("chatBody");
-
-  chatBody.innerHTML += `
-  <div class="bot-message">${faqDatabase[index].answer}</div>
-  `;
-
-  chatBody.scrollTop = chatBody.scrollHeight;
+chatBody.scrollTop = chatBody.scrollHeight;
 
 }
 
-function handleKey(event) {
+function showAnswer(index){
 
-  if (event.key === "Enter") {
-    sendMessage();
-  }
+const chatBody = document.getElementById("chatBody");
+
+chatBody.innerHTML +=
+'<div class="bot-message">'+faqDatabase[index].answer+'</div>';
+
+chatBody.scrollTop = chatBody.scrollHeight;
+
+}
+
+function handleKey(event){
+
+if(event.key === "Enter"){
+sendMessage();
+}
 
 }
 
-function toggleChat() {
+function toggleChat(){
 
-  const chat = document.getElementById("chatContainer");
+const chat = document.getElementById("chatContainer");
 
-  chat.classList.toggle("active");
+chat.classList.toggle("active");
 
 }
-```
+
