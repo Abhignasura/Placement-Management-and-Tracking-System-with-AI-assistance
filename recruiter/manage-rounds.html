@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Manage Interview Rounds</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+
+body{
+margin:0;
+display:flex;
+font-family: Arial, Helvetica, sans-serif;
+}
+
+.sidebar{
+width:220px;
+height:100vh;
+background:#343a40;
+color:white;
+padding:20px;
+}
+
+.sidebar h4{
+margin-bottom:20px;
+}
+
+.sidebar a{
+display:block;
+color:white;
+padding:10px;
+text-decoration:none;
+margin-bottom:5px;
+border-radius:5px;
+}
+
+.sidebar a:hover{
+background:#495057;
+}
+
+.content{
+flex:1;
+padding:25px;
+background:#f5f6fa;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- Sidebar -->
+
+<div class="sidebar">
+
+<h4>Recruiter Portal</h4>
+
+<a href="dashboard.html"><i class="fa fa-chart-line"></i> Dashboard</a>
+
+<a href="create-job.html"><i class="fa fa-plus"></i> Create Job</a>
+
+<a href="manage-rounds.html"><i class="fa fa-layer-group"></i> Manage Rounds</a>
+
+<a href="schedule-interview.html"><i class="fa fa-calendar"></i> Schedule Interview</a>
+
+<a href="analytics.html"><i class="fa fa-chart-bar"></i> Analytics</a>
+
+<button onclick="logout()" class="btn btn-danger mt-3 w-100">
+Logout
+</button>
+
+</div>
+
+
+<!-- Main Content -->
+
+<div class="content">
+
+<h2>Manage Interview Rounds</h2>
+
+<div class="mb-3">
+
+<label class="form-label">Select Job</label>
+
+<select id="jobSelect" class="form-control"></select>
+
+</div>
+
+<table class="table table-hover table-striped shadow mt-4">
+
+<thead class="table-dark">
+
+<tr>
+<th>Roll No</th>
+<th>Branch</th>
+<th>CGPA</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+</thead>
+
+<tbody id="applicantsTable"></tbody>
+
+</table>
+
+</div>
+
+
+<script src="../js/api.js"></script>
+
+<script>
+
+let role = localStorage.getItem("role");
+
+if(!role || role.toUpperCase() !== "RECRUITER"){
+window.location.href="../index.html";
+}
+
+function logout(){
+localStorage.removeItem("role");
+localStorage.removeItem("token");
+window.location.href="../index.html";
+}
+
+let selectedJobId = null;
+
+
+
+async function loadJobs(){
+
+const response = await apiGet("/recruiter/my-jobs");
+
+const jobs = await response.json();
+
+const dropdown = document.getElementById("jobSelect");
+
+dropdown.innerHTML = "<option value=''>Select Job</option>";
+
+jobs.forEach(job => {
+
+const option = document.createElement("option");
+
+option.value = job.jobId;
+
+option.text = job.title;
+
+dropdown.appendChild(option);
+
+});
+
+}
+
+
+
+document.getElementById("jobSelect").addEventListener("change", function(){
+
+selectedJobId = this.value;
+
+if(selectedJobId){
+loadApplicants(selectedJobId);
+}
+
+});
+
+
+
+async function loadApplicants(jobId){
+
+const response = await apiGet("/recruiter/applicants/" + jobId);
+
+const applicants = await response.json();
+
+const table = document.getElementById("applicantsTable");
+
+table.innerHTML="";
+
+applicants.forEach(app => {
+
+const row=document.createElement("tr");
+
+row.innerHTML=`
+<td>${app.rollNo}</td>
+<td>${app.branch}</td>
+<td>${app.cgpa}</td>
+<td>${app.status}</td>
+<td>
+
+<button class="btn btn-success btn-sm"
+onclick="passRound(${app.applicationId})">
+PASS
+</button>
+
+<button class="btn btn-danger btn-sm"
+onclick="failRound(${app.applicationId})">
+FAIL
+</button>
+
+<button class="btn btn-primary btn-sm"
+onclick="scheduleInterview(${app.applicationId})">
+Schedule Interview
+</button>
+
+</td>
+`;
+
+table.appendChild(row);
+
+});
+
+}
+
+
+
+async function passRound(applicationId){
+
+await fetch(
+API_BASE + `/recruiter/update-result?applicationId=${applicationId}&roundName=Technical&roundOrder=1&result=PASS`,
+{
+method:"POST",
+headers:{
+"Authorization":"Bearer " + localStorage.getItem("token")
+}
+});
+
+alert("Round Updated");
+
+if(selectedJobId){
+loadApplicants(selectedJobId);
+}
+
+}
+
+
+
+async function failRound(applicationId){
+
+await fetch(
+API_BASE + `/recruiter/update-result?applicationId=${applicationId}&roundName=Technical&roundOrder=1&result=FAIL`,
+{
+method:"POST",
+headers:{
+"Authorization":"Bearer " + localStorage.getItem("token")
+}
+});
+
+alert("Candidate Rejected");
+
+if(selectedJobId){
+loadApplicants(selectedJobId);
+}
+
+}
+
+
+
+function scheduleInterview(applicationId){
+
+window.location.href =
+"schedule-interview.html?applicationId=" + applicationId;
+
+}
+
+
+
+loadJobs();
+
+</script>
+
+<link rel="stylesheet" href="../css/chatbot.css">
+<script src="../js/chatbot.js"></script>
+<script src="../js/chatbot-widget.js"></script>
+
+</body>
+</html>
