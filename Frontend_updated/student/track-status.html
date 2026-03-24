@@ -106,7 +106,6 @@ Logout
 <script src="../js/api.js"></script>
 <script>
 
-const API_BASE = "http://localhost:8080/api";
 const token = localStorage.getItem("token");
 
 let role = localStorage.getItem("role");
@@ -156,12 +155,10 @@ badgeColor = "danger";
 }
 
 row.innerHTML = `
-<td>${app.jobId}</td>
-<td>Job Role</td>
+<td>${app.companyName}</td>
+<td>${app.jobTitle}</td>
 <td>
-<span class="badge bg-${badgeColor}">
-${app.status}
-</span>
+<span class="badge bg-warning">${app.status}</span>
 </td>
 `;
 
@@ -174,9 +171,8 @@ table.appendChild(row);
 loadApplications();
 
 </script>
-
 <link rel="stylesheet" href="../css/chatbot.css">
-<script src="../js/chatbot.js"></script>
+
 
 <div class="chat-icon" onclick="toggleChat()">💬</div>
 
@@ -202,6 +198,6 @@ onkeypress="handleKey(event)">
 
 </div>
 
-
+<script src="../js/chatbot.js"></script>
 </body>
 </html>

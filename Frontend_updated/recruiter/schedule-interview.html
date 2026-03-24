@@ -97,8 +97,10 @@ Logout
 <form id="scheduleForm">
 
 <div class="mb-3">
-<label class="form-label">Application ID</label>
-<input type="number" id="applicationId" class="form-control" required>
+<label class="form-label">Student (Roll No)</label>
+
+<input type="hidden" id="applicationId">
+
 </div>
 
 <div class="mb-3">
@@ -130,48 +132,92 @@ Logout
 
 <script>
 
+const params = new URLSearchParams(window.location.search);
+const applicationId = params.get("applicationId");
+
+document.getElementById("applicationId").value = applicationId;
+
 let role = localStorage.getItem("role");
 
 if(!role || role.toUpperCase() !== "RECRUITER"){
-window.location.href="../index.html";
+    window.location.href="../index.html";
 }
 
 function logout(){
-localStorage.removeItem("role");
-localStorage.removeItem("token");
-window.location.href="../index.html";
+    localStorage.removeItem("role");
+    localStorage.removeItem("token");
+    window.location.href="../index.html";
 }
 
+const token = localStorage.getItem("token");
+
+
+// LOAD APPLICANTS INTO DROPDOWN
+async function loadApplicants(){
+
+    const jobId = 1; // temporary job id
+
+    const response = await fetch(API_BASE + "/recruiter/applicants/" + jobId,{
+        headers:{
+            "Authorization":"Bearer " + token
+        }
+    });
+
+    const applicants = await response.json();
+
+    const dropdown = document.getElementById("applicationId");
+
+    dropdown.innerHTML = '<option value="">Select Candidate</option>';
+
+    applicants.forEach(app => {
+
+        const option = document.createElement("option");
+
+        option.value = app.applicationId;
+
+        option.text = app.rollNo + " - " + app.studentName;
+
+        dropdown.appendChild(option);
+
+    });
+
+}
+
+
+
+// SCHEDULE INTERVIEW
 document.getElementById("scheduleForm").addEventListener("submit", async function(e){
 
-e.preventDefault();
+    e.preventDefault();
 
-const applicationId = document.getElementById("applicationId").value;
-const roundName = document.getElementById("roundName").value;
-const date = document.getElementById("date").value;
-const time = document.getElementById("time").value;
+    const applicationId = document.getElementById("applicationId").value;
+    const roundName = document.getElementById("roundName").value;
+    const date = document.getElementById("date").value;
+    const time = document.getElementById("time").value;
 
-const response = await apiPost("/recruiter/schedule-interview",{
+    const response = await fetch(
+        API_BASE + `/recruiter/schedule-interview?applicationId=${applicationId}&roundName=${roundName}&date=${date}&time=${time}&mode=ONLINE&location=GoogleMeet`,
+        {
+            method: "POST",
+            headers:{
+                "Authorization": "Bearer " + token
+            }
+        }
+    );
 
-applicationId: applicationId,
-roundName: roundName,
-date: date,
-time: time,
-mode: "ONLINE",
-location: "Google Meet"
+    const msg = await response.text();
+
+    alert(msg);
 
 });
 
-const msg = await response.text();
 
-alert(msg);
-
-});
+// LOAD DROPDOWN WHEN PAGE OPENS
+loadApplicants();
 
 </script>
-
 <link rel="stylesheet" href="../css/chatbot.css">
-<script src="../js/chatbot.js"></script>
+
 
 <div class="chat-icon" onclick="toggleChat()">💬</div>
 
@@ -197,6 +243,6 @@ onkeypress="handleKey(event)">
 
 </div>
 
-
+<script src="../js/chatbot.js"></script>
 </body>
 </html>

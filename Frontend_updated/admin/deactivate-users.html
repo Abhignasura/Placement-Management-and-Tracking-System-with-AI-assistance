@@ -102,54 +102,80 @@ Logout
 
 </thead>
 
-<tbody>
-
-<tr>
-<td>Rahul</td>
-<td>Student</td>
-<td><span class="badge bg-success">Active</span></td>
-<td>
-<button class="btn btn-warning btn-sm">
-<i class="fa fa-user-slash"></i> Deactivate
-</button>
-</td>
-</tr>
-
-<tr>
-<td>Priya</td>
-<td>Recruiter</td>
-<td><span class="badge bg-success">Active</span></td>
-<td>
-<button class="btn btn-warning btn-sm">
-<i class="fa fa-user-slash"></i> Deactivate
-</button>
-</td>
-</tr>
-
-</tbody>
+<tbody id="usersTable"></tbody>
 
 </table>
 
 </div>
 
 
+<script src="../js/api.js"></script>
+
 <script>
 
 let role = localStorage.getItem("role");
 
-if(!role){
-window.location.href = "../index.html";
+if(!role || role.toUpperCase() !== "ADMIN"){
+    window.location.href="../index.html";
 }
 
 function logout(){
-localStorage.removeItem("role");
-window.location.href = "../index.html";
+    localStorage.removeItem("role");
+    localStorage.removeItem("token");
+    window.location.href="../index.html";
 }
 
-</script>
+async function loadUsers(){
 
+const response = await apiGet("/admin/users");
+
+const users = await response.json();
+
+const table = document.getElementById("usersTable");
+
+table.innerHTML="";
+
+users.forEach(user => {
+
+const statusBadge = user.isActive
+? '<span class="badge bg-success">Active</span>'
+: '<span class="badge bg-danger">Inactive</span>';
+
+const row=document.createElement("tr");
+
+row.innerHTML=`
+<td>${user.email}</td>
+<td>${user.role}</td>
+<td>${statusBadge}</td>
+<td>
+<button class="btn btn-warning btn-sm"
+onclick="deactivateUser(${user.userId})">
+Deactivate
+</button>
+</td>
+`;
+
+table.appendChild(row);
+
+});
+
+}
+
+async function deactivateUser(userId){
+
+await apiPost("/admin/deactivate-user/" + userId);
+
+alert("User Deactivated");
+
+loadUsers();
+
+}
+
+loadUsers();
+
+</script>
 <link rel="stylesheet" href="../css/chatbot.css">
-<script src="../js/chatbot.js"></script>
+
 
 <div class="chat-icon" onclick="toggleChat()">💬</div>
 
@@ -175,6 +201,6 @@ onkeypress="handleKey(event)">
 
 </div>
 
-
+<script src="../js/chatbot.js"></script>
 </body>
 </html>

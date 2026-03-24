@@ -87,12 +87,20 @@ Logout
 
 <h2>Manage Interview Rounds</h2>
 
+<div class="mb-3">
+
+<label class="form-label">Select Job</label>
+
+<select id="jobSelect" class="form-control"></select>
+
+</div>
+
 <table class="table table-hover table-striped shadow mt-4">
 
 <thead class="table-dark">
 
 <tr>
-<th>Student Name</th>
+<th>Roll No</th>
 <th>Branch</th>
 <th>CGPA</th>
 <th>Status</th>
@@ -124,9 +132,49 @@ localStorage.removeItem("token");
 window.location.href="../index.html";
 }
 
-async function loadApplicants(){
+let selectedJobId = null;
 
-const jobId = 1; // temporary test job
+
+
+async function loadJobs(){
+
+const response = await apiGet("/recruiter/my-jobs");
+
+const jobs = await response.json();
+
+const dropdown = document.getElementById("jobSelect");
+
+dropdown.innerHTML = "<option value=''>Select Job</option>";
+
+jobs.forEach(job => {
+
+const option = document.createElement("option");
+
+option.value = job.jobId;
+
+option.text = job.title;
+
+dropdown.appendChild(option);
+
+});
+
+}
+
+
+
+document.getElementById("jobSelect").addEventListener("change", function(){
+
+selectedJobId = this.value;
+
+if(selectedJobId){
+loadApplicants(selectedJobId);
+}
+
+});
+
+
+
+async function loadApplicants(jobId){
 
 const response = await apiGet("/recruiter/applicants/" + jobId);
 
@@ -141,7 +189,7 @@ applicants.forEach(app => {
 const row=document.createElement("tr");
 
 row.innerHTML=`
-<td>${app.studentName}</td>
+<td>${app.rollNo}</td>
 <td>${app.branch}</td>
 <td>${app.cgpa}</td>
 <td>${app.status}</td>
@@ -171,6 +219,8 @@ table.appendChild(row);
 
 }
 
+
+
 async function passRound(applicationId){
 
 await fetch(
@@ -184,7 +234,13 @@ headers:{
 
 alert("Round Updated");
 
+if(selectedJobId){
+loadApplicants(selectedJobId);
 }
+
+}
+
+
 
 async function failRound(applicationId){
 
@@ -199,9 +255,13 @@ headers:{
 
 alert("Candidate Rejected");
 
-loadApplicants();
+if(selectedJobId){
+loadApplicants(selectedJobId);
+}
 
 }
+
+
 
 function scheduleInterview(applicationId){
 
@@ -210,12 +270,14 @@ window.location.href =
 
 }
 
-loadApplicants();
+
+
+loadJobs();
 
 </script>
 
 <link rel="stylesheet" href="../css/chatbot.css">
-<script src="../js/chatbot.js"></script>
+
 
 <div class="chat-icon" onclick="toggleChat()">💬</div>
 
@@ -241,6 +303,7 @@ onkeypress="handleKey(event)">
 
 </div>
 
+<script src="../js/chatbot.js"></script>
 
 </body>
 </html>

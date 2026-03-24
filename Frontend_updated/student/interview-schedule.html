@@ -143,10 +143,10 @@ modeColor = "success";
 const row = document.createElement("tr");
 
 row.innerHTML = `
-<td>Company</td>
+<td>${interview.companyName}</td>
 <td>${interview.roundName}</td>
-<td>${interview.interviewDate}</td>
-<td>${interview.interviewTime}</td>
+<td>${interview.date}</td>
+<td>${interview.time}</td>
 <td>
 <span class="badge bg-${modeColor}">
 ${interview.mode}
@@ -163,9 +163,8 @@ table.appendChild(row);
 loadInterviews();
 
 </script>
-
 <link rel="stylesheet" href="../css/chatbot.css">
-<script src="../js/chatbot.js"></script>
+
 
 <div class="chat-icon" onclick="toggleChat()">💬</div>
 
@@ -191,6 +190,6 @@ onkeypress="handleKey(event)">
 
 </div>
 
-
+<script src="../js/chatbot.js"></script>
 </body>
 </html>

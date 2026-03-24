@@ -147,15 +147,13 @@ window.location.href = "../index.html";
 
 async function loadAnalytics(){
 
-const jobId = 1; // temporary
-
-const response = await apiGet("/recruiter/job-stats/" + jobId);
+const response = await apiGet("/recruiter/analytics");
 
 const stats = await response.json();
 
-document.getElementById("jobsPosted").innerText = 1;
-document.getElementById("totalApplications").innerText = stats.TOTAL_APPLICANTS;
-document.getElementById("selectedStudents").innerText = stats.SELECTED;
+document.getElementById("jobsPosted").innerText = stats.jobs;
+document.getElementById("totalApplications").innerText = stats.applications;
+document.getElementById("selectedStudents").innerText = stats.selected;
 
 const ctx = document.getElementById('applicationsChart');
 
@@ -166,9 +164,9 @@ labels: ['In Progress','Rejected','Selected'],
 datasets: [{
 label: 'Candidates',
 data: [
-stats.IN_PROGRESS,
-stats.REJECTED,
-stats.SELECTED
+stats.inProgress,
+stats.rejected,
+stats.selected
 ],
 backgroundColor: ['#ffc107','#dc3545','#198754']
 }]
@@ -180,9 +178,8 @@ backgroundColor: ['#ffc107','#dc3545','#198754']
 loadAnalytics();
 
 </script>
-
 <link rel="stylesheet" href="../css/chatbot.css">
-<script src="../js/chatbot.js"></script>
+
 
 <div class="chat-icon" onclick="toggleChat()">💬</div>
 
@@ -208,7 +205,7 @@ onkeypress="handleKey(event)">
 
 </div>
 
-
+<script src="../js/chatbot.js"></script>
 
 </body>
 </html>

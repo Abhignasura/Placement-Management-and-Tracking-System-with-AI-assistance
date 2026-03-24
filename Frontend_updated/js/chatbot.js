@@ -125,4 +125,3 @@ const chat = document.getElementById("chatContainer");
 chat.classList.toggle("active");
 
 }
-

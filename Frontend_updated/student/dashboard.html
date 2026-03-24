@@ -90,6 +90,11 @@ Logout
 
 <h2>Dashboard</h2>
 
+<div class="card shadow p-3 mb-4">
+<h5 id="studentName"></h5>
+<p id="studentInfo"></p>
+</div>
+
 <div class="row mt-4">
 
 <div class="col-md-4">
@@ -166,10 +171,27 @@ data.applications.filter(a=>a.status==="SELECTED").length;
 
 loadDashboard();
 
-</script>
+async function loadStudentProfile(){
 
+const response = await apiGet("/student/profile");
+
+const student = await response.json();
+
+document.getElementById("studentName").innerText =
+"Welcome, " + student.name;
+
+document.getElementById("studentInfo").innerText =
+"Roll No: " + student.rollNo + " | Branch: " + student.branch;
+
+}
+
+loadStudentProfile();
+
+
+
+</script>
 <link rel="stylesheet" href="../css/chatbot.css">
-<script src="../js/chatbot.js"></script>
+
 
 <div class="chat-icon" onclick="toggleChat()">💬</div>
 
@@ -195,6 +217,6 @@ onkeypress="handleKey(event)">
 
 </div>
 
-
+<script src="../js/chatbot.js"></script>
 </body>
 </html>

@@ -103,35 +103,11 @@ Logout
 
 <tbody id="branchTable"></tbody>
 
-<tr>
-<td>CSE</td>
-<td>40</td>
-<td><span class="badge bg-success">High</span></td>
-</tr>
-
-<tr>
-<td>ECE</td>
-<td>25</td>
-<td><span class="badge bg-primary">Medium</span></td>
-</tr>
-
-<tr>
-<td>IT</td>
-<td>15</td>
-<td><span class="badge bg-warning">Average</span></td>
-</tr>
-
-<tr>
-<td>MECH</td>
-<td>5</td>
-<td><span class="badge bg-danger">Low</span></td>
-</tr>
-
-</tbody>
-
 </table>
 
 </div>
+
+<script src="../js/api.js"></script>
 
 <script src="../js/api.js"></script>
 
@@ -149,12 +125,18 @@ table.innerHTML="";
 
 Object.entries(data).forEach(([branch,count]) => {
 
+let badge="bg-danger";
+
+if(count > 20) badge="bg-success";
+else if(count > 10) badge="bg-primary";
+else if(count > 5) badge="bg-warning";
+
 const row=document.createElement("tr");
 
 row.innerHTML=`
 <td>${branch}</td>
 <td>${count}</td>
-<td><span class="badge bg-primary">Active</span></td>
+<td><span class="badge ${badge}">${count}</span></td>
 `;
 
 table.appendChild(row);
@@ -181,9 +163,9 @@ window.location.href = "../index.html";
 }
 
 </script>
-```html
+
 <link rel="stylesheet" href="../css/chatbot.css">
-<script src="../js/chatbot.js"></script>
+
 
 <div class="chat-icon" onclick="toggleChat()">💬</div>
 
@@ -209,34 +191,7 @@ onkeypress="handleKey(event)">
 
 </div>
 
-<link rel="stylesheet" href="../css/chatbot.css">
 <script src="../js/chatbot.js"></script>
-
-<div class="chat-icon" onclick="toggleChat()">💬</div>
-
-<div class="chat-container" id="chatContainer">
-
-<div class="chat-header">
-Placement Assistant
-<span onclick="toggleChat()">✖</span>
-</div>
-
-<div class="chat-body" id="chatBody">
-<div class="bot-message">
-Hi 👋 Ask me about placements or eligibility.
-</div>
-</div>
-
-<div class="chat-footer">
-<input type="text" id="userInput"
-placeholder="Type your question..."
-onkeypress="handleKey(event)">
-<button onclick="sendMessage()">Send</button>
-</div>
-
-</div>
-
-
 
 </body>
 </html>
