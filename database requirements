@@ -1,12 +1,13 @@
 database used - MYSQL
 
-Tables needed for the project - 
-
--Users & roles	
--Student profiles	
--Recruiter profiles	
--Jobs	
--Applications	
--Round results	
--Interview schedules	
--Final selection status
+1. create database named "placement_system" - 
+2. create tables -
+admins
+applications
+interview_schedule
+jobs
+recruiters
+rounds
+students
+users
+3. 
