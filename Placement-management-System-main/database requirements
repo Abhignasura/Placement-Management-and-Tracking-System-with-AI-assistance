@@ -1,0 +1,13 @@
+database used - MYSQL
+
+1. create database named "placement_system" - 
+2. create tables -
+admins
+applications
+interview_schedule
+jobs
+recruiters
+rounds
+students
+users
+3. 
