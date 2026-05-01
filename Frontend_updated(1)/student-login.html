@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Student Login</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:#f5f6fa;
+font-family:Arial;
+}
+
+.login-card{
+width:350px;
+padding:30px;
+border-radius:10px;
+background:white;
+box-shadow:0px 10px 25px rgba(0,0,0,0.2);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="login-card">
+
+<h3 class="text-center mb-3">Student Login</h3>
+
+<form id="loginForm" novalidate>
+
+<div class="mb-3">
+<label>Email</label>
+<input type="email" id="email" class="form-control">
+</div>
+
+<div class="mb-3">
+<label>Password</label>
+<input type="password" id="password" class="form-control">
+</div>
+
+<button type="button" onclick="loginAdmin()" class="btn btn-primary w-100">
+Login
+</button>
+
+<a href="index.html" class="btn btn-link w-100 mt-2">Back</a>
+
+</form>
+
+</div>
+
+<script src="js/auth.js"></script>
+
+
+<link rel="stylesheet" href="css/chatbot.css">
+<script src="js/chatbot.js"></script>
+
+<div class="chat-icon" onclick="toggleChat()">💬</div>
+
+<div class="chat-container" id="chatContainer">
+
+<div class="chat-header">
+Placement Assistant
+<span onclick="toggleChat()">✖</span>
+</div>
+
+<div class="chat-body" id="chatBody">
+<div class="bot-message">
+Hi 👋 Ask me about placements or eligibility.
+</div>
+</div>
+
+<div class="chat-footer">
+<input type="text" id="userInput"
+placeholder="Type your question..."
+onkeypress="handleKey(event)">
+<button onclick="sendMessage()">Send</button>
+</div>
+
+</div>
+
+</body>
+</html>
